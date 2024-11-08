@@ -1,7 +1,7 @@
-                                    identity                                      hash  target_x  target_y  ...  source_w  source_h  threshold  distance
-0                   images/Mees/meesDijk.jpg  aa2a258d4866304f8c30b2ef9da326878a09240d       562       278  ...       639       479       0.68  0.578407
-1                images/Mees/MeesvanDijk.jpg  c99a35f49df8dd0332a982150abc89a12002f0ae       543       180  ...       639       479       0.68  0.621137
-2                   images/Mees/unknown1.jpg  bc77af938b6d441e21b632bc59817bfc6240f9a3       533       319  ...       639       479       0.68  0.640193
-3  images/Rami/WIN_20241002_13_37_23_Pro.jpg  78534f96d06b792227083fdbba0e093815c0fe79       954       406  ...       639       479       0.68  0.665213
+                      identity  ...  distance
+0  images/Mees/MeesvanDijk.jpg  ...  0.291649
+1     images/Mees/meesDijk.jpg  ...  0.299296
+2     images/Mees/unknown1.jpg  ...  0.354410
+3      images/Mees/unknown.jpg  ...  0.380428
 
 [4 rows x 12 columns]
