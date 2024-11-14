@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 from starlette.responses import StreamingResponse
 from datetime import datetime
-
+import calendar
 
 app = FastAPI()
 executor = ThreadPoolExecutor(max_workers=5)
@@ -25,7 +25,7 @@ picam2 = None
 camera_lock = Lock()
 
 app.mount("/herkend", StaticFiles(directory="herkend"), name="herkend")
-# CORS setup
+
 origins = [
     "http://localhost:8000", 
     "http://127.0.0.1:8000",
@@ -57,15 +57,9 @@ async def shutdown_event():
         picam2.stop()
 
 
-@app.post("/predict/")
-async def predict(request: Request):
-    print("Connection made to predict")
-    body = await request.body()
-    Buffer = body.decode("utf-8")
-    cleanBuffer = Buffer.replace("data:image/jpeg;base64,", "")
-    newBuffer = await recognize_image(cleanBuffer)
-
-    return {"newBuffer": newBuffer}
+@app.get("/")
+async def root():
+    return {"message": "Please make a request to '/predict'"}
 
 @app.get("/video")
 async def video_stream():
@@ -84,21 +78,36 @@ async def video_stream():
 
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
-@app.get("/")
-async def root():
-    return {"message": "Please make a request to '/predict'"}
 
+
+
+@app.get("/start")
+async def start():
+    StartTime = calendar.timegm(datetime.now().timetuple())
+    frame = 1;
+    while StartTime + 5 > calendar.timegm(datetime.now().timetuple()):    
+        with camera_lock:
+            if frame == 1:
+                return "Gestart"
+            stream = io.BytesIO()
+            picam2.capture_file(stream, format="jpeg")
+            stream.seek(0)
+            with open (f"frame/frame_{frame}.jpeg", "wb") as f: 
+                f.write(stream.getvalue())
+            frame = frame + 1
+        await asyncio.sleep(0.1)
+        
 
 @app.get("/recognize")
 async def recognize(request: Request):
     print("Connection made to recognize")
+    stream = io.BytesIO()
     with camera_lock:
-        stream = io.BytesIO()
         picam2.capture_file(stream, format="jpeg")
         stream.seek(0)
-        print("going to cal lrecognize")
-        Result = await recognize_image(stream)
+        print("going to call recognize")
     
+    Result = await recognize_image(stream)
     return Result
         
 

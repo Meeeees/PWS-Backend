@@ -1,7 +1,0 @@
-                      identity  ...  distance
-0  images/Mees/MeesvanDijk.jpg  ...  0.291649
-1     images/Mees/meesDijk.jpg  ...  0.299296
-2     images/Mees/unknown1.jpg  ...  0.354410
-3      images/Mees/unknown.jpg  ...  0.380428
-
-[4 rows x 12 columns]
