@@ -6,12 +6,8 @@ from fastapi.staticfiles import StaticFiles
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from deepface import DeepFace
-import pandas as pd
-import logging
-import base64
 import io
-from picamera2 import Picamera2, Preview
-import time
+from picamera2 import Picamera2
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
@@ -72,16 +68,18 @@ async def video_stream():
     if not picam2:
         raise HTTPException(status_code=500, detail="Camera not initialized.")
     async def generate_frames():
-        while True:
-            await asyncio.sleep(0.01)
-            with camera_lock:
-                stream = io.BytesIO()
-                picam2.capture_file(stream, format="jpeg")
-                stream.seek(0)
+        try:
+            while True:
+                await asyncio.sleep(0.01)
+                with camera_lock:
+                    stream = io.BytesIO()
+                    picam2.capture_file(stream, format="jpeg")
+                    stream.seek(0)
 
-                yield (b'--frame\r\n'
+                    yield (b'--frame\r\n'
                         b'Content-Type: image/jpeg\r\n\r\n' + stream.read() + b'\r\n')
-
+        except asyncio.CancelledError:
+            print("Video stream canceled by the client.")
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.get("/")
@@ -110,11 +108,6 @@ async def recognize_image(stream):
     print("Now going to run DeepFace")
     results = DeepFace.find(img_path=imgArray, db_path="images",  enforce_detection=False)  
     print("Result: ",results)
-    if isinstance(results, list) and len(results) > 0:
-        json_results = json.dumps([result.to_dict() if isinstance(result, pd.DataFrame) else result for result in results])
-    else:
-        json_results = json.dumps(results)
-
     
     draw = ImageDraw.Draw(image)
 
