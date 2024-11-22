@@ -1,9 +1,9 @@
 # PWS Gezichtsherkenning Backend programma
 ## Dit is de backend repositorie van het PWS van Mees en Stijn over gezichtherkenning, bekijk de frontend repositorie [hier](https://github.com/Meeeees/PWS-Frontend-React)
 
-## Starten van het programma
-Stappen om de fastapi server te starten:
-
+### Starten van het programma
+- allereerst moet je de "virtual enviroment" activeren, omdat de raspberry pi een linux gebaseerd systeem heeft doe je dit door het commando `source venv/bin/activate` uit te voeren.
+- vervolgens kan je de fastapi server starten (in de development mode), dit doe je door het commando `fastapi dev main.py --host 0.0.0.0` uit te voeren
 
 
 ## Gebruikers flow
