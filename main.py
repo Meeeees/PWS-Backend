@@ -1,4 +1,5 @@
 import json
+import os
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -23,6 +24,7 @@ app = FastAPI()
 executor = ThreadPoolExecutor(max_workers=5)
 picam2 = None
 camera_lock = Lock()
+shared_frame = io.BytesIO()
 
 app.mount("/herkend", StaticFiles(directory="herkend"), name="herkend")
 
@@ -36,7 +38,7 @@ origins = [
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,7 +48,9 @@ app.add_middleware(
 async def startup_event():
     global picam2
     picam2 = Picamera2()
-    picam2.configure(picam2.create_preview_configuration())
+    camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)}, lores={"size": (640, 480)}, display="lores")
+
+    picam2.configure(camera_config)
     picam2.start()
 
 
@@ -63,61 +67,97 @@ async def root():
 
 @app.get("/video")
 async def video_stream():
+    global shared_frame
     if not picam2:
         raise HTTPException(status_code=500, detail="Camera not initialized.")
     async def generate_frames():
         while True:
             await asyncio.sleep(0.01)
             with camera_lock:
-                stream = io.BytesIO()
-                picam2.capture_file(stream, format="jpeg")
-                stream.seek(0)
-
+                temp_frame = io.BytesIO()  # Temporary frame container
+                picam2.capture_file(temp_frame, format="jpeg")
+                temp_frame.seek(0)
+                shared_frame.seek(0)
+                shared_frame.truncate(0)  # Clear shared frame
+                shared_frame.write(temp_frame.read())  # Update shared frame
+                shared_frame.seek(0)  # Reset pointer for reading
+            
                 yield (b'--frame\r\n'
-                        b'Content-Type: image/jpeg\r\n\r\n' + stream.read() + b'\r\n')
+                        b'Content-Type: image/jpeg\r\n\r\n' + shared_frame.read() + b'\r\n')
 
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
+frame = 0
 
-
+@app.get("/frame_counter")
+async def frame_counter():
+    global frame
+    return frame
 
 @app.get("/start")
-async def start():
-    StartTime = calendar.timegm(datetime.now().timetuple())
+async def start(name: str | None = None):
+    global StreamMain
+    global frame
+    if name == "":
+        return {
+            "status": 400,
+            "reden": "Geef alsjeblieft een naam op"
+        }
+    if os.path.exists(f"frame/{name}"):
+        return {
+            "status": 409,
+            "reden": "Die naam is al door iemands anders in gebruik"
+        }
+    os.mkdir(f"frame/{name}")
     frame = 1;
-    while StartTime + 5 > calendar.timegm(datetime.now().timetuple()):    
+    print("Start")
+    while frame < 51:   
         with camera_lock:
-            if frame == 1:
-                return "Gestart"
-            stream = io.BytesIO()
-            picam2.capture_file(stream, format="jpeg")
-            stream.seek(0)
-            with open (f"frame/frame_{frame}.jpeg", "wb") as f: 
-                f.write(stream.getvalue())
-            frame = frame + 1
+            current_frame = io.BytesIO(shared_frame.getvalue()) 
+        print(frame)
+
+        with open (f"frame/{name}/frame_{frame}.png", "wb") as f: 
+            f.write(current_frame.getvalue())
+        frame = frame + 1
         await asyncio.sleep(0.1)
         
 
 @app.get("/recognize")
 async def recognize(request: Request):
     print("Connection made to recognize")
-    stream = io.BytesIO()
+    streams = {
+        1: io.BytesIO(),
+        2: io.BytesIO(),
+        3: io.BytesIO(),
+        4: io.BytesIO(),
+        5: io.BytesIO(),
+    }
     with camera_lock:
-        picam2.capture_file(stream, format="jpeg")
-        stream.seek(0)
-        print("going to call recognize")
-    
-    Result = await recognize_image(stream)
-    return Result
+        for i in range(1, 6):
+            picam2.capture_file(streams.get(i), format="jpeg")
+            streams.get(i).seek(0)
+
+    tried = 1
+    result = 1
+    while result == 1 and tried <= 5:
+        current_stream = streams.get(tried)
+        if current_stream:
+            result = await recognize_image(current_stream)
+        tried += 1
+
+    return result
         
 
 
 async def recognize_image(stream):
-    print("gonna recognize")
     image = Image.open(stream)
     imgArray = np.array(image)
-    print("Now going to run DeepFace")
-    results = DeepFace.find(img_path=imgArray, db_path="images",  enforce_detection=False)  
+    try: 
+        results = DeepFace.find(img_path=imgArray, db_path="frame",  enforce_detection=True)  
+    except:
+        print("Opnieuw proberen")
+        return 1
+
     print("Result: ",results)
     if isinstance(results, list) and len(results) > 0:
         json_results = json.dumps([result.to_dict() if isinstance(result, pd.DataFrame) else result for result in results])
