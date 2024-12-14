@@ -10,7 +10,9 @@ from deepface import DeepFace
 import pandas as pd
 import logging
 import base64
+import re
 import io
+import sys
 from picamera2 import Picamera2, Preview
 import time
 import asyncio
@@ -25,8 +27,15 @@ executor = ThreadPoolExecutor(max_workers=5)
 picam2 = None
 camera_lock = Lock()
 shared_frame = io.BytesIO()
+NeedToTrain = False;
 
 app.mount("/herkend", StaticFiles(directory="herkend"), name="herkend")
+
+logging.basicConfig(
+    filename='app.log',
+    level=logging.ERROR,
+    format="%(asctime)s - %(message)s"
+)
 
 origins = [
     "http://localhost:8000", 
@@ -53,6 +62,9 @@ async def startup_event():
     picam2.configure(camera_config)
     picam2.start()
 
+    asyncio.create_task(capture_frames())
+
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -65,27 +77,32 @@ async def shutdown_event():
 async def root():
     return {"message": "Please make a request to '/predict'"}
 
+def capture_frame():
+    global shared_frame
+    with camera_lock:
+        temp_frame = io.BytesIO()
+        picam2.capture_file(temp_frame, format="jpeg")
+        temp_frame.seek(0)
+        shared_frame.seek(0)
+        shared_frame.truncate(0)
+        shared_frame.write(temp_frame.read())
+        shared_frame.seek(0)
+
+async def capture_frames():
+    while True:
+        capture_frame()
+        await asyncio.sleep(0.05)
+
 @app.get("/video")
 async def video_stream():
-    global shared_frame
-    if not picam2:
-        raise HTTPException(status_code=500, detail="Camera not initialized.")
     async def generate_frames():
         while True:
-            await asyncio.sleep(0.01)
-            with camera_lock:
-                temp_frame = io.BytesIO()  # Temporary frame container
-                picam2.capture_file(temp_frame, format="jpeg")
-                temp_frame.seek(0)
-                shared_frame.seek(0)
-                shared_frame.truncate(0)  # Clear shared frame
-                shared_frame.write(temp_frame.read())  # Update shared frame
-                shared_frame.seek(0)  # Reset pointer for reading
-            
-                yield (b'--frame\r\n'
-                        b'Content-Type: image/jpeg\r\n\r\n' + shared_frame.read() + b'\r\n')
+            await asyncio.sleep(0.05)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + shared_frame.getvalue() + b'\r\n')
 
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+
 
 frame = 0
 
@@ -96,6 +113,7 @@ async def frame_counter():
 
 @app.get("/start")
 async def start(name: str | None = None):
+    global NeedToTrain
     global StreamMain
     global frame
     if name == "":
@@ -103,12 +121,12 @@ async def start(name: str | None = None):
             "status": 400,
             "reden": "Geef alsjeblieft een naam op"
         }
-    if os.path.exists(f"frame/{name}"):
+    if os.path.exists(f"gezichten/{name}"):
         return {
             "status": 409,
             "reden": "Die naam is al door iemands anders in gebruik"
         }
-    os.mkdir(f"frame/{name}")
+    os.mkdir(f"gezichten/{name}")
     frame = 1;
     print("Start")
     while frame < 51:   
@@ -116,15 +134,16 @@ async def start(name: str | None = None):
             current_frame = io.BytesIO(shared_frame.getvalue()) 
         print(frame)
 
-        with open (f"frame/{name}/frame_{frame}.png", "wb") as f: 
+        with open (f"gezichten/{name}/frame_{frame}.png", "wb") as f: 
             f.write(current_frame.getvalue())
         frame = frame + 1
         await asyncio.sleep(0.1)
+    NeedToTrain = True
+    return "Success"
         
 
 @app.get("/recognize")
 async def recognize(request: Request):
-    print("Connection made to recognize")
     streams = {
         1: io.BytesIO(),
         2: io.BytesIO(),
@@ -144,27 +163,60 @@ async def recognize(request: Request):
         if current_stream:
             result = await recognize_image(current_stream)
         tried += 1
-
+    if result == 1:
+        return {"status": 422, "reden": "Er kon geen gezicht worden herkend"}
     return result
         
 
+Progress = 0
+
+@app.get("/info")
+async def info(progress: int | None = None):
+    if progress == 0:
+        return {"NeedToTrain": NeedToTrain}
+    elif progress == 1:
+        return {Progress}
+
+def OutputHandle(message):
+    global Progress
+    if "Face could not be detected" in message:
+        file = message.split("Exception while extracting faces from")[1].split(": Face could")[0].strip()
+        if os.path.exists(file):
+            os.remove(file)
+            sys.__stdout__.write(f"verwijderd: {file}\n")
+    if "Finding representations" in message:
+        match = re.search(r"(\d+)%", message)
+        if match:
+            procent = match.group(1)
+            sys.__stdout__.write(f"Progress: {procent}%\n")
+            Progress = procent
+
+class SystemOutputHandle:
+    def write(self, message):
+        OutputHandle(message)
+        
+    def flush(self):
+        sys.__stdout__.flush()
 
 async def recognize_image(stream):
+    global NeedToTrain
     image = Image.open(stream)
     imgArray = np.array(image)
     try: 
-        results = DeepFace.find(img_path=imgArray, db_path="frame",  enforce_detection=True)  
+        print("proberen te herkennen")
+        sys.stdout = SystemOutputHandle()
+        sys.stderr = sys.stdout
+        results = DeepFace.find(img_path=imgArray, db_path="gezichten")  
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
+        NeedToTrain = False;
     except:
         print("Opnieuw proberen")
         return 1
 
     print("Result: ",results)
-    if isinstance(results, list) and len(results) > 0:
-        json_results = json.dumps([result.to_dict() if isinstance(result, pd.DataFrame) else result for result in results])
-    else:
-        json_results = json.dumps(results)
 
-    
     draw = ImageDraw.Draw(image)
 
     try:
