@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 gezichten/
 herkend/
 fotoAccuratieTest/
+=======
+herkend/
+images/
+
+>>>>>>> main
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
