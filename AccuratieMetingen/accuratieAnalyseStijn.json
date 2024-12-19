@@ -1,0 +1,91 @@
+[
+    {
+        "Tijd nodig": 4.697491407394409,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.70024847984314,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.816538333892822,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            },
+            {
+                "mees": 0.001976284584980237
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.787889242172241,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.816063642501831,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.865939140319824,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.828508377075195,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            },
+            {
+                "mees": 0.015810276679841896
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.774039268493652,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "stijn": 1.0
+            },
+            {
+                "mees": 0.001976284584980237
+            }
+        ]
+    }
+]

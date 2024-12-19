@@ -1,0 +1,289 @@
+[
+    {
+        "Tijd nodig": 51.35300350189209,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.83125
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 9.756000757217407,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8291666666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.133478164672852,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8229166666666666
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 8.00160813331604,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8291666666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 10.59835433959961,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 1
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.361680269241333,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.6270833333333333
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.301152229309082,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": false,
+        "percentages": [
+            {
+                "mees": 0.2125
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.109258651733398,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8291666666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.017012357711792,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8354166666666667
+            },
+            {
+                "stijn": 0.34
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 4.343416929244995,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.825
+            },
+            {
+                "stijn": 0.62
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 6.923267126083374,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": false,
+        "percentages": [
+            {
+                "mees": 0.17708333333333334
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.087132215499878,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8270833333333333
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.185044527053833,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8270833333333333
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.440847158432007,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8479166666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.2832190990448,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8229166666666666
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.229803562164307,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8270833333333333
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.1856207847595215,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8270833333333333
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.544153451919556,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8354166666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 6.869412422180176,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": false,
+        "percentages": [
+            {
+                "mees": 0.23333333333333334
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.094430923461914,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": false,
+        "percentages": [
+            {
+                "mees": 0.21458333333333332
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.204466819763184,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8291666666666667
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 8.20303988456726,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 1.0770833333333334
+            },
+            {
+                "stijn": 0.02
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 5.518540143966675,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.85625
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.161252021789551,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.83125
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.046910524368286,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.825
+            }
+        ]
+    },
+    {
+        "Tijd nodig": 7.119666576385498,
+        "Aantal fotos in sessie": 1,
+        "Succesvol herkend": true,
+        "percentages": [
+            {
+                "mees": 0.8229166666666666
+            }
+        ]
+    }
+]
